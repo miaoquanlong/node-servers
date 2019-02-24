@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var mysql = require('./mysql/mysqlConcat')
 
 var index = require('./routes/index');
 var data = require('./routes/data');
@@ -31,6 +32,28 @@ app.use(session({
 app.use('/', index);
 app.use('/data', data);
 
+let getuser=function (callback) {
+    var sql=`select * from user`;
+    mysql.query(sql,(err, result) => {
+      if(err){
+        callback(err);
+      } else {
+        callback(null, result);
+      }
+    });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -39,6 +62,9 @@ app.use(function(req, res, next) {
   next(err);
 });
 
+app.listen(3000,function(){
+  console.log('server is running')
+})
 // error handlers
 
 // development error handler
