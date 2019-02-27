@@ -43,18 +43,6 @@ let getuser=function (callback) {
     });
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
@@ -63,12 +51,9 @@ app.use(function(req, res, next) {
 });
 
 app.listen(3000,function(){
-  console.log('server is running')
+  console.log('服务已启动')
 })
-// error handlers
 
-// development error handler
-// will print stacktrace
 if (app.get('env') === 'development') {
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
@@ -79,8 +64,6 @@ if (app.get('env') === 'development') {
   });
 }
 
-// production error handler
-// no stacktraces leaked to user
 app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error', {

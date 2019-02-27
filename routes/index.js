@@ -2,6 +2,19 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var PATH = './public/data/';
+var $sql = require('./sqlMap');
+let mysql = require('mysql')
+
+const $dbConfig = {
+    host: "localhost",
+    user: "root",
+    password: "123456",
+    port: "3306",
+    database: "block"
+}
+
+var pool = mysql.createPool($dbConfig);
+
 
 router.get('/', function (req, res, next) {
     if (!req.session.user) {
@@ -22,6 +35,8 @@ router.get('/tuijian', function (req, res, next) {
 });
 
 router.get('/edit', function (req, res, next) {
+    console.log(666);
+
     if (!req.session.user) {
         return res.render('login', {});
     }
@@ -65,6 +80,47 @@ router.get('/edit', function (req, res, next) {
             info: '参数错误'
         });
     }
+});
+
+
+
+
+// pool.getConnection(function (err, connect) { //通过getConnection()方法进行数据库连接
+//     if (err) {
+//         console.log(`mysql链接失败啦啦啦${err}`);
+//     } else {
+//         connect.query('select * from artic', function (err, result) {
+//             if (err) {
+//                 console.log(`SQL error:${err}`)
+//             } else {
+//                 // console.log(result);
+//                 connect.release(); //释放连接池中的数据库连接
+//                 pool.end(); //关闭连接池
+//             }
+//         });
+//     }
+// })
+
+router.get('/addUser', (req, res, next) => {
+    pool.query('select * from artic', (err, result) => {
+        if (err) {
+            return res.json(err)
+            console.log("33");
+        }
+        return res.json(result)
+    })
+    // res.json({ result })
+    // this.pool.getConnection()
+    // var sql = 'select * from user '
+    // var params = req.body;
+    // console.log(params, "99000");
+    // pool.query(sql, ...params, function (error, results, fields) {
+    //     if (error) throw error;
+    //     if (results) {
+    //         console.log(results)
+    //         jsonWrite(res, results);
+    //     }
+    // })
 });
 
 //首页大表单
