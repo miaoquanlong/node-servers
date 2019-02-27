@@ -2,6 +2,9 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var PATH = './public/data/';
+// import {query} from "";
+// var $request = require('../mysql/mysqlConcat')
+
 
 router.get('/', function (req, res, next) {
     if (!req.session.user) {
@@ -22,6 +25,9 @@ router.get('/tuijian', function (req, res, next) {
 });
 
 router.get('/edit', function (req, res, next) {
+    // console.log($request.queryArgs(),"000");
+    // $request.getartics()
+    // this.query()
     if (!req.session.user) {
         return res.render('login', {});
     }
@@ -67,6 +73,5 @@ router.get('/edit', function (req, res, next) {
     }
 });
 
-//首页大表单
 
 module.exports = router;
