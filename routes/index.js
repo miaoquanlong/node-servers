@@ -64,7 +64,42 @@ router.get('/about', (req, res, next) => {
         pool.end()
     })
 });
+//用户注册
+router.post('/userRegister', (req, res, next) => {
+    let reqs = req.body
+    let params = { userName: reqs.username, passWord: reqs.password }
+    pool.query('INSERT INTO userRegister SET ?', params, (err, result, fields) => {
+        if (err) {
+            return res.json({
+                code: -1,
+                data: '数据库写入失败'
+            })
+        }
+        return res.json({
+            code: 0,
+            data: result
+        })
+        pool.end()
+    })
+})
+//用户登陆
 
-//首页大表单
+router.post('/login', (req, res, next) => {
+    let reqs = req.body
+    query = pool.query("SELECT * FROM userRegister WHERE userName = ? && passWord = ?", [reqs.username, reqs.password], (err, result) => {
+        if (err) {
+            return res.json({
+                code: -1,
+                data: err
+            })
+        }
+        return res.json({
+            code: 0,
+            data: result[0]
+        })
+        pool.end()
+    })
+})
+
 
 module.exports = router;
