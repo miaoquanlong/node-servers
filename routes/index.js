@@ -68,38 +68,79 @@ router.get('/about', (req, res, next) => {
 router.post('/userRegister', (req, res, next) => {
     let reqs = req.body
     let params = { userName: reqs.username, passWord: reqs.password }
-    pool.query('INSERT INTO userRegister SET ?', params, (err, result, fields) => {
+    pool.query("SELECT * FROM userRegister WHERE userName=" + mysql.escape(reqs.username), (err, results) => {
+        if (results.length > 0) {
+            return res.json({
+                code: -1,
+                data: '该用户名已注册'
+            })
+        }
+        pool.query('INSERT INTO userRegister SET ?', params, (err, result, fields) => {
+            if (err) {
+                return res.json({
+                    code: -1,
+                    data: '数据库写入失败'
+                })
+            }
+            return res.json({
+                code: 0,
+                data: result
+            })
+            pool.end()
+        })
+    })
+
+
+})
+//用户登陆
+router.post('/login', (req, res, next) => {
+    let reqs = req.body
+    pool.query("SELECT * FROM userRegister WHERE userName = ? && passWord = ?", [reqs.username, reqs.password], (err, result) => {
+        if (result.length > 0) {
+            return res.json({
+                code: 0,
+                data: result[0]
+            })
+        }
+        return res.json({
+            code: -1,
+            data: '用户名或密码不正确,请检查'
+        })
+        pool.end()
+    })
+})
+//用户评论
+router.post('/message', (req, res, next) => {
+    let reqs = req.body
+    console.log(reqs, "665");
+    let post = { messageName: reqs.messageName, content: reqs.content, dataTime: new Date()}
+    pool.query("INSERT INTO message SET ?", post, (err, result) => {
         if (err) {
             return res.json({
                 code: -1,
-                data: '数据库写入失败'
+                data: '评论失败'
+            })
+        }
+        return res.json({
+            code: 0,
+            data: '留言成功'
+        })
+    })
+})
+//获取用户评论
+router.get('/getmessage', (req, res, next) => {
+    pool.query(" SELECT * FROM  message  ORDER BY DATAtIME DESC", (err, result) => {
+        if (err) {
+            return res.json({
+                code: -1,
+                data: '获取失败'
             })
         }
         return res.json({
             code: 0,
             data: result
         })
-        pool.end()
     })
 })
-//用户登陆
-
-router.post('/login', (req, res, next) => {
-    let reqs = req.body
-    query = pool.query("SELECT * FROM userRegister WHERE userName = ? && passWord = ?", [reqs.username, reqs.password], (err, result) => {
-        if (err) {
-            return res.json({
-                code: -1,
-                data: err
-            })
-        }
-        return res.json({
-            code: 0,
-            data: result[0]
-        })
-        pool.end()
-    })
-})
-
 
 module.exports = router;
