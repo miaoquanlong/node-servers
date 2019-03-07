@@ -112,8 +112,7 @@ router.post('/login', (req, res, next) => {
 //用户评论
 router.post('/message', (req, res, next) => {
     let reqs = req.body
-    console.log(reqs, "665");
-    let post = { messageName: reqs.messageName, content: reqs.content, dataTime: new Date()}
+    let post = { messageName: reqs.messageName, content: reqs.content, dataTime: new Date(), userID: reqs.userID }
     pool.query("INSERT INTO message SET ?", post, (err, result) => {
         if (err) {
             return res.json({
@@ -125,6 +124,8 @@ router.post('/message', (req, res, next) => {
             code: 0,
             data: '留言成功'
         })
+        pool.end()
+
     })
 })
 //获取用户评论
@@ -136,11 +137,56 @@ router.get('/getmessage', (req, res, next) => {
                 data: '获取失败'
             })
         }
+        let results = result.map(item => {
+            return {
+                ID: item.ID,
+                canEdit: item.canEdit == 1 ? true : false,
+                content: item.content,
+                dataTime: item.dataTime,
+                messageName: item.messageName,
+                userID: item.userID,
+            }
+        })
         return res.json({
             code: 0,
-            data: result
+            data: results
         })
     })
 })
 
+//删除用户评论
+router.post('/deletemessage', (req, res, next) => {
+    let reqs = req.body
+    pool.query(" DELETE FROM message WHERE userID = ? &&ID = ?", [reqs.userID, reqs.messageID], (err, result) => {
+        if (err) {
+            return res.json({
+                code: -1,
+                data: '评论删除失败'
+            })
+        }
+        return res.json({
+            code: 0,
+            data: '删除成功'
+        })
+        pool.end()
+    })
+})
+//修改评论
+router.post('/editmessage', (req, res, next) => {
+    let reqs = req.body
+    let query = pool.query(" UPDATE message SET content = ?  WHERE userID = ? && ID = ? ", [reqs.content, reqs.userID, reqs.messageID], (err, result) => {
+        console.log(query.sql);
+        if (err) {
+            return res.json({
+                code: -1,
+                data: '评论修改失败'
+            })
+        }
+        return res.json({
+            code: 0,
+            data: '修改成功'
+        })
+        pool.end()
+    })
+})
 module.exports = router;
