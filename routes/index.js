@@ -130,29 +130,32 @@ router.post('/message', (req, res, next) => {
 })
 //获取用户评论
 router.get('/getmessage', (req, res, next) => {
-    pool.query(" SELECT * FROM  message  ORDER BY DATAtIME DESC", (err, result) => {
+    // pool.query(" SELECT * FROM  message  ORDER BY DATAtIME DESC", (err, result) => {
+    pool.query("SELECT * FROM message LEFT JOIN reply on message.userID = replyID  ORDER BY DATAtIME DESC", (err, result) => {
         if (err) {
             return res.json({
                 code: -1,
                 data: '获取失败'
             })
         }
-        let results = result.map(item => {
-            return {
-                ID: item.ID,
-                canEdit: item.canEdit == 1 ? true : false,
-                content: item.content,
-                dataTime: item.dataTime,
-                messageName: item.messageName,
-                userID: item.userID,
-            }
-        })
+        // let results = result.map(item => {
+        //     return {
+        //         ID: item.ID,
+        //         canEdit: item.canEdit == 1 ? true : false,
+        //         content: item.content,
+        //         dataTime: item.dataTime,
+        //         messageName: item.messageName,
+        //         userID: item.userID,
+        //     }
+        // })
         return res.json({
             code: 0,
-            data: results
+            data: result
         })
     })
 })
+//获取用户评论
+// router.get('/getreply',(req,res,next) = {})
 
 //删除用户评论
 router.post('/deletemessage', (req, res, next) => {
@@ -185,6 +188,24 @@ router.post('/editmessage', (req, res, next) => {
         return res.json({
             code: 0,
             data: '修改成功'
+        })
+        pool.end()
+    })
+})
+//回复评论
+router.post('/reply', (req, res, next) => {
+    let reqs = req.body
+    let post = { replyname: reqs.replyname, replycontent: reqs.replycontent, replyID: reqs.replyID, replyTime: new Date() }
+    pool.query('INSERT INTO reply SET ?', post, (err, resule) => {
+        if (err) {
+            return res.json({
+                code: -1,
+                data: '回复失败'
+            })
+        }
+        return res.json({
+            code: 0,
+            data: '回复成功'
         })
         pool.end()
     })
