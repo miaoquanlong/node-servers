@@ -14,24 +14,6 @@ const $dbConfig = {
 var pool = mysql.createPool($dbConfig);
 
 
-
-
-// pool.getConnection(function (err, connect) { //通过getConnection()方法进行数据库连接
-//     if (err) {
-//         console.log(`mysql链接失败999${err}`);
-//     } else {
-//         connect.query('select * from user', function (err, result) {
-//             if (err) {
-//                 console.log(`SQL error:${err}`)
-//             } else {
-//                 console.log(result);
-//                 connect.release(); //释放连接池中的数据库连接
-//                 // pool.end(); //关闭连接池
-//             }
-//         });
-//     }
-// })
-
 //首页
 router.get('/Home', (req, res, next) => {
     pool.query('select * from Home', (err, result) => {
@@ -130,32 +112,48 @@ router.post('/message', (req, res, next) => {
 })
 //获取用户评论
 router.get('/getmessage', (req, res, next) => {
-    // pool.query(" SELECT * FROM  message  ORDER BY DATAtIME DESC", (err, result) => {
-    pool.query("SELECT * FROM message LEFT JOIN reply on message.userID = replyID  ORDER BY DATAtIME DESC", (err, result) => {
+    pool.query(" SELECT * FROM  message  ORDER BY DATAtIME DESC", (err, result) => {
+        // pool.query("SELECT * FROM message LEFT JOIN reply on message.ID = messageID  ORDER BY DATAtIME DESC", (err, result) => {
         if (err) {
             return res.json({
                 code: -1,
                 data: '获取失败'
             })
         }
-        // let results = result.map(item => {
-        //     return {
-        //         ID: item.ID,
-        //         canEdit: item.canEdit == 1 ? true : false,
-        //         content: item.content,
-        //         dataTime: item.dataTime,
-        //         messageName: item.messageName,
-        //         userID: item.userID,
-        //     }
-        // })
+        let results = result.map(item => {
+            return {
+                ID: item.ID,
+                canEdit: item.canEdit == 1 ? true : false,
+                content: item.content,
+                dataTime: item.dataTime,
+                messageName: item.messageName,
+                userID: item.userID,
+            }
+        })
         return res.json({
             code: 0,
             data: result
         })
+        pool.end()
     })
 })
-//获取用户评论
-// router.get('/getreply',(req,res,next) = {})
+//获取用户回复
+router.get('/getreply', (req, res, next) => {
+    pool.query("SELECT * FROM reply", (err, result) => {
+        if (err) {
+            return res.json({
+                code: -1,
+                data: '获取失败'
+            })
+        }
+        return res.json({
+            code: 0,
+            data: result
+        })
+        pool.end()
+    })
+
+})
 
 //删除用户评论
 router.post('/deletemessage', (req, res, next) => {
@@ -195,7 +193,7 @@ router.post('/editmessage', (req, res, next) => {
 //回复评论
 router.post('/reply', (req, res, next) => {
     let reqs = req.body
-    let post = { replyname: reqs.replyname, replycontent: reqs.replycontent, replyID: reqs.replyID, replyTime: new Date() }
+    let post = { replyname: reqs.replyname, replycontent: reqs.replycontent, messageID: reqs.messageID, replyTime: new Date() }
     pool.query('INSERT INTO reply SET ?', post, (err, resule) => {
         if (err) {
             return res.json({
@@ -210,4 +208,22 @@ router.post('/reply', (req, res, next) => {
         pool.end()
     })
 })
+
+// //获取Python爬虫回来的 掘金文章
+// router.get('/juejin', (req, res, next) => {
+//     pool.query(" SELECT * FROM juejin", (err, result) => {
+//         if (err) {
+//             return res.json({
+//                 code: -1,
+//                 data: '获取成功'
+//             })
+//         }
+//         return res.json({
+//             code: 0,
+//             data: result
+//         })
+//         pool.end()
+//     })
+// })
+
 module.exports = router;

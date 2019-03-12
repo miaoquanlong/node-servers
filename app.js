@@ -5,6 +5,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
+var artic = require('./routes/artic');
+
 
 var app = express();
 
@@ -19,9 +21,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 
 app.use('/', index);
+app.use('/artic', artic);
 
-app.listen(3303,function(){
-  console.log('服务已启动')
+
+app.listen(3303, function () {
+    console.log('服务已启动')
 })
 
 module.exports = app;
