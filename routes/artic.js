@@ -16,11 +16,11 @@ var pool = mysql.createPool($dbConfig);
 
 //获取Python爬虫回来的 掘金文章
 router.get('/juejin', (req, res, next) => {
-    pool.query(" SELECT * FROM juejin ORDER BY ID DESC", (err, result) => {
+    pool.query(" SELECT * FROM juejin ORDER BY articID ASC", (err, result) => {
         if (err) {
             return res.json({
                 code: -1,
-                data: '获取成功'
+                data: '获取失败'
             })
         }
         return res.json({
