@@ -8,6 +8,7 @@ var index = require('./routes/index');
 var artic = require('./routes/artic');
 var socket = require('./routes/socket');
 
+// var pool = require('./common/sqlconfig')
 
 var app = express();
 
@@ -22,9 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/artic', artic);
-// app.use('/socket', socket);
-
-
 
 app.listen(3303, function () {
     console.log('服务已启动')

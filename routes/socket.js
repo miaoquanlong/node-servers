@@ -1,17 +1,9 @@
 var express = require('express');
 var app = express();
-let mysql = require('mysql')
 var router = express.Router();
 
-const $dbConfig = {
-    host: "localhost",
-    user: "root",
-    password: "123456",
-    port: "3306",
-    database: "block"
-}
+var pool = require("../common/sqlconfig");
 
-var pool = mysql.createPool($dbConfig);
 
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
