@@ -6,13 +6,14 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-    "debug": "~2.2.0",
+    "debug": "^4.1.1",
     "ejs": "~2.3.3",
     "express": "^4.16.4",
     "express-session": "^1.11.1",
     "morgan": "^1.9.1",
     "nodemon": "^1.18.10",
-    "serve-favicon": "^2.5.0"
+    "serve-favicon": "^2.5.0",
+    "socket.io": "^2.2.0"
   },
   "devDependencies": {
     "body-parser": "^1.18.3",

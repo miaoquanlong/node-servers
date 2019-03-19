@@ -6,6 +6,7 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var artic = require('./routes/artic');
+var socket = require('./routes/socket');
 
 
 var app = express();
@@ -19,9 +20,10 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use('/', index);
 app.use('/artic', artic);
+// app.use('/socket', socket);
+
 
 
 app.listen(3303, function () {
