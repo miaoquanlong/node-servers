@@ -9,15 +9,12 @@ var _ = require('lodash')
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 
-// app.use('/', express.static(__dirname + '/public'));
 
 server.listen(9003);
 var userList = []
 var logoutList = []
 
 
-//在线用户
-var onlineUsers = {};
 //当前在线人数
 var onlineCount = 0;
 io.on('connection', function (socket) {
@@ -39,11 +36,6 @@ io.on('connection', function (socket) {
        if (index!==-1) {
         userList.splice(index,1)
        }
-        // if (userList.length == 0) {
-        //     console.log("游客退出");
-        // } else {
-        //     userList.splice(_.findIndex(userList, name), 1)
-        // }
         //向所有客户端广播用户退出
         io.emit('userlogout', name, userList);
 

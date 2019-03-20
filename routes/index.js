@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 // var fs = require('fs');
-// let mysql = require('mysql')
+let mysql = require('mysql')
 
 // const $dbConfig = {
 //     host: "localhost",
