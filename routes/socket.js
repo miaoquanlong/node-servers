@@ -20,9 +20,11 @@ var onlineCount = 0;
 io.on('connection', function (socket) {
     //监听新用户加入
     socket.on('enter', function (name) {
-        if (userList.indexOf(name) === -1) {
+        if (userList.indexOf(name) === -1 && name != null) {
             userList.push(name)
         }
+        console.log(userList, "96");
+
         io.emit('userenter', name);
         io.emit('userList', userList, userList.length);
         //实时获取所有消息内容 触发客户端方法
@@ -32,10 +34,10 @@ io.on('connection', function (socket) {
     });
     //监听用户退出
     socket.on('userleave', function (name) {
-       let index = userList.indexOf(name)
-       if (index!==-1) {
-        userList.splice(index,1)
-       }
+        let index = userList.indexOf(name)
+        if (index !== -1) {
+            userList.splice(index, 1)
+        }
         //向所有客户端广播用户退出
         io.emit('userlogout', name, userList);
 
